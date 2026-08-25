@@ -1,0 +1,22 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: natsql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: natsql_root
+      MYSQL_DATABASE: demo
+    ports:
+      # Host 3307 to avoid clashing with any local MySQL on 3306
+      - "3307:3306"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d:ro
+      - natsql-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pnatsql_root"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+volumes:
+  natsql-mysql-data:
